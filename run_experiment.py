@@ -8,7 +8,7 @@ from tqdm import tqdm
 # --- Configuration ---
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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",
+    api_key="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",
 )
 
 MODELS = [
