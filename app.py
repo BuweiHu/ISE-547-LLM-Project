@@ -95,4 +95,4 @@ if uploaded_file is not None:
                     st.error(f"Analysis failed: {str(e)}")
 
 st.divider()
-st.caption("© 2024 ISE 547 Project | Model: Arcee-Trinity-400B")
+st.caption("© 2026 ISE 547 Project | Model: Arcee-Trinity-400B")
