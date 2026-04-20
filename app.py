@@ -3,10 +3,10 @@ import fitz
 import json
 import pandas as pd
 from openai import OpenAI
-
+api_key = st.secrets["OPENROUTER_API_KEY"]
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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",
+    api_key=api_key,
 )
 
 def extract_text_from_pdf(file):
