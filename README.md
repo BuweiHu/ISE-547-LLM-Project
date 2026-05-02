@@ -35,10 +35,13 @@ Our system isn't just a wrapper; it's a validated engineering solution. We condu
 ├── run_experiment.py      # Core API experiment execution engine
 ├── demo.ipynb             # Data preprocessing & statistical analysis (MAE/Corr)
 ├── data/                  # Directory for input datasets
+├── requirment.txt         # Required packages
+├── run_experiment.py      # Core API experiment execution engine
 └── results/               # Directory for experiment outputs & visualizations
 ```
 
-<img width="3000" height="1800" alt="MAE_Final_Plot" src="https://github.com/user-attachments/assets/661b916f-9287-4527-b66b-fff5b8927c27" />
-<img width="3000" height="1800" alt="Match_Rate_Final_Plot" src="https://github.com/user-attachments/assets/694f7e96-5b9c-4586-a04f-442091540f33" />
+<img width="3000" height="1800" alt="Correlation_Final_Plot" src="https://github.com/user-attachments/assets/a1464c2e-1806-464a-97f9-86fe5d9d735c" />
+<img width="3000" height="1800" alt="Match_Rate_Final_Plot" src="https://github.com/user-attachments/assets/8f052ddc-8757-4d5c-8beb-16b85fe8c4da" />
+<img width="3000" height="1800" alt="MAE_Final_Plot" src="https://github.com/user-attachments/assets/d79ebbf8-e4a3-420a-b2b7-e1ddbc3a07d0" />
 
 
