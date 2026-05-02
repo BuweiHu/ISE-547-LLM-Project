@@ -8,7 +8,7 @@ This project is the final deliverable for ISE 547. We have developed an end-to-e
 
 - Web Framework: Streamlit (for the working website)
 
-- LLM Models: Arcee Trinity (400B), GPT-OSS (120B) via OpenRouter API
+- LLM Models: Arcee Trinity (400B), GPT-OSS (120B), Nemotron Nano (9B), Nemotron Nano (30B) via OpenRouter API
 
 - PDF Processing: PyMuPDF (fitz)
 
@@ -17,7 +17,7 @@ This project is the final deliverable for ISE 547. We have developed an end-to-e
 ### Key Experimental Results
 Our system isn't just a wrapper; it's a validated engineering solution. We conducted rigorous testing on a balanced dataset (df1):
 
-- Classification Accuracy: 94.00% (Arcee-400B with Expert Persona)
+- Classification Accuracy: 94.00% (All models with Expert Persona)
 
 - Mean Absolute Error (MAE): 1.14 (on a 1-5 scoring scale)
 
