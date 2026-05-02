@@ -1,93 +1,113 @@
-from openai import OpenAI
 import pandas as pd
 import json
 import os
-from tqdm import tqdm
 import time
+import re
+from tqdm import tqdm
+from openai import OpenAI
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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",
+    api_key="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",
 )
+
+MODELS = [
+    # "arcee-ai/trinity-large-preview:free", 
+    "nvidia/nemotron-3-nano-30b-a3b:free",
+    "nvidia/nemotron-nano-9b-v2:free",
+    "openai/gpt-oss-120b:free"
+]
+
+SELECTED_CATEGORIES = ["INFORMATION-TECHNOLOGY", "ENGINEERING", "FINANCE", "HR", "SALES"]
+
 def resume_classification_validation(df):
-    results = []
-    
-    selected_categories = [
-        "INFORMATION-TECHNOLOGY",
-        "ENGINEERING",
-        "FINANCE",
-        "HR",
-        "SALES"
-    ]
-    
     system_prompt = f"""
-    You are an expert Recruitment Classifier. Analyze the resume and categorize it into ONE of: {selected_categories}.
-    Return ONLY a JSON object with these keys: 
-    "predicted_category" (must be from the list), 
-    "confidence" (0.0 to 1.0),
-    "reason" (one sentence).
+    You are an expert Recruitment Classifier. Analyze the resume and categorize it into ONE of: {SELECTED_CATEGORIES}.
+    Return ONLY a JSON object: 
+    {{"predicted_category": "...", "confidence": 0.0, "reason": "..."}}
     """
 
-    print(f"Verifying classification accuracy for {len(df)} resumes...")
+    summary_report = []
 
-    for idx, row in tqdm(df.iterrows(), total=len(df)):
-        resume_text = str(row['Resume_str'])[:3000] 
-        true_label = row['Category']
-        
-        try:
-            completion = client.chat.completions.create(
-                model="arcee-ai/trinity-large-preview:free",
-                messages=[
-                    {"role": "user", "content": f"{system_prompt}\n\nResume: {resume_text}"}
-                ]
-            )
+    if not os.path.exists("results"):
+        os.makedirs("results")
 
-            response_text = completion.choices[0].message.content
+    for model in MODELS:
+        results = []
+        print(f"\n🚀 Evaluation: {model}")
 
-            clean_json = response_text.replace('```json', '').replace('```', '').replace('```', '').strip()
-            data = json.loads(clean_json)
+        for idx, row in tqdm(df.iterrows(), total=len(df), desc=f"Processing {model}"):
+            resume_text = str(row['Resume_str'])[:3000] 
+            true_label = str(row['Category']).upper().strip()
             
-            results.append({
-                'True_Category': true_label,
-                'Predicted_Category': data.get('predicted_category', 'ERROR').upper(),
-                'Confidence': data.get('confidence', 0),
-                'Reason': data.get('reason', '')
-            })
-            time.sleep(5)
-        except Exception as e:
-            print(f"Error at row {idx}: {e}")
-            results.append({
-                'True_Category': true_label, 
-                'Predicted_Category': 'TIMEOUT/ERROR', 
-                'Confidence': 0, 
-                'Reason': str(e)
-            })
-            time.sleep(5)
+            try:
+                completion = client.chat.completions.create(
+                    model=model, 
+                    messages=[{"role": "user", "content": f"{system_prompt}\n\nResume: {resume_text}"}],
+                    temperature=0.1,
+                    timeout=30
+                )
 
-    res_df = pd.DataFrame(results)
+                response_text = completion.choices[0].message.content
+                
+                match = re.search(r'\{.*\}', response_text, re.DOTALL)
+                if match:
+                    data = json.loads(match.group(0))
+                else:
+                    raise ValueError("No JSON found in response")
+                
+                pred_cat = str(data.get('predicted_category', 'ERROR')).upper().strip()
+                
+                results.append({
+                    'Model': model,
+                    'True_Category': true_label,
+                    'Predicted_Category': pred_cat,
+                    'Confidence': data.get('confidence', 0),
+                    'Match': 1 if true_label.replace('-', ' ') == pred_cat.replace('-', ' ') else 0
+                })
+                
+                time.sleep(1.5)
+
+            except Exception as e:
+                print(f"\n❌ Error at row {idx} for {model}: {e}")
+                results.append({
+                    'Model': model, 
+                    'True_Category': true_label, 
+                    'Predicted_Category': 'ERROR',
+                    'Match': 0
+                })
+                time.sleep(5)
+
+        temp_df = pd.DataFrame(results)
+        accuracy = (temp_df['Match'].sum() / len(temp_df)) * 100
+        
+        summary_report.append({"Model": model, "Accuracy": f"{accuracy:.2f}%"})
+        print(f"✅ {model} evaluation completed. Accuracy: {accuracy:.2f}%")
+
+        file_safe_name = model.replace("/", "_").replace(":", "_")
+        temp_df.to_csv(f"results/detailed_res_{file_safe_name}.csv", index=False)
     
-    correct = (res_df['True_Category'].str.upper() == res_df['Predicted_Category'].str.upper()).sum()
-    accuracy = (correct / len(res_df)) * 100
-    
-    print("\n" + "="*30)
-    print(f"Classification Report:")
-    print(f"Total Samples: {len(df)}")
-    print(f"Classification Accuracy: {accuracy:.2f}%")
-    print("="*30)
-    
-    return res_df, accuracy
+    return pd.DataFrame(summary_report)
 
 if __name__ == "__main__":
-    data_path = "processed_dataset/processed_dataset1.csv" 
+    DATA_PATH = "processed_dataset/processed_dataset1.csv" 
 
-    if os.path.exists(data_path):
-        df1 = pd.read_csv(data_path)
+    if os.path.exists(DATA_PATH):
+        print("Loading dataset...")
+        df_input = pd.read_csv(DATA_PATH)
         
-        final_results, final_acc = resume_classification_validation(df1)
+        # df_input = df_input.sample(20, random_state=42) 
+
+        final_summary_df = resume_classification_validation(df_input)
         
-        output_path = "results/classification_validation_results.csv"
-        final_results.to_csv(output_path, index=False)
-        print(f"Saved to: {output_path}")
+        print("\n" + "="*40)
+        print("🏆 FINAL CLASSIFICATION SUMMARY REPORT")
+        print("="*40)
+        print(final_summary_df)
+        print("="*40)
+        
+        final_summary_df.to_csv("results/final_accuracy_report.csv", index=False)
+        print("\n✨ report save to results/final_accuracy_report.csv")
         
     else:
-        print(f"Unable to find data file: {data_path}.")
+        print(f"can not find {DATA_PATH}. Please check the path and try again.")

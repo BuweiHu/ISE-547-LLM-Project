@@ -8,12 +8,14 @@ from tqdm import tqdm
 # --- Configuration ---
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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",
+    api_key="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",
 )
 
 MODELS = [
-    "arcee-ai/trinity-large-preview:free",     
-    "openai/gpt-oss-120b:free"
+    # "arcee-ai/trinity-large-preview:free",     
+    # "openai/gpt-oss-120b:free"
+    "nvidia/nemotron-nano-9b-v2:free",
+    "nvidia/nemotron-3-nano-30b-a3b:free"
 ]
 
 OUTPUT_FILE = "results/matching_results_final.csv"

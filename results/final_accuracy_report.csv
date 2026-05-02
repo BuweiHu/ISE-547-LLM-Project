@@ -1,0 +1,4 @@
+Model,Accuracy
+nvidia/nemotron-3-nano-30b-a3b:free,94.00%
+nvidia/nemotron-nano-9b-v2:free,94.00%
+openai/gpt-oss-120b:free,94.00%

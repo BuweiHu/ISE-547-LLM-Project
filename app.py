@@ -3,8 +3,7 @@ import fitz
 import json
 import pandas as pd
 from openai import OpenAI
-api_key = st.secrets.get("OPENROUTER_API_KEY", "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")
-
+api_key = st.secrets["OPENROUTER_API_KEY"]
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=api_key,
@@ -95,4 +94,4 @@ if uploaded_file is not None:
                     st.error(f"Analysis failed: {str(e)}")
 
 st.divider()
-st.caption("© 2026 ISE 547 Project | Model: Arcee-Trinity-400B")
+st.caption("© 2024 ISE 547 Project | Model: Arcee-Trinity-400B")
