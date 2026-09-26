@@ -35,7 +35,7 @@ Our system isn't just a wrapper; it's a validated engineering solution. We condu
 ├── run_experiment.py      # Core API experiment execution engine
 ├── demo.ipynb             # Data preprocessing & statistical analysis (MAE/Corr)
 ├── data/                  # Directory for input datasets
-├── requirment.txt         # Required packages
+├── requirments.txt         # Required packages
 ├── run_experiment.py      # Core API experiment execution engine
 └── results/               # Directory for experiment outputs & visualizations
 ```
