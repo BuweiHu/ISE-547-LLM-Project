@@ -1,4 +1,8 @@
 pymupdf
 openai
 pandas
+numpy
 streamlit
+matplotlib
+seaborn
+tqdm
