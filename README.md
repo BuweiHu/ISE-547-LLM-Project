@@ -97,17 +97,17 @@ These results suggest that prompt design can meaningfully affect LLM-based class
 ### 1. Install dependencies
 
 Run the following command:
-
+```bash
 pip install -r requirements.txt
-
+```
 ### 2. Set API key
 
 This project uses the OpenRouter API. Do not hard-code API keys in source files.
 
 For local experiments, set an environment variable:
-
+```bash
 export OPENROUTER_API_KEY="your_api_key_here"
-
+```
 For Streamlit, create a local secrets file:
 
 .streamlit/secrets.toml
@@ -121,18 +121,22 @@ The .streamlit/secrets.toml file should not be committed to GitHub.
 ### 3. Run the Streamlit app
 
 Run:
-
+```bash
 streamlit run app.py
+```
 
 ### 4. Run experiment scripts
 
 Classification validation:
 
+```bash
 python resume_classification.py
-
+```
 Resume-job matching experiment:
 
+```bash
 python run_experiment.py
+```
 
 ## Data Notice
 
